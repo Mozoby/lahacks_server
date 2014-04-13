@@ -45,4 +45,4 @@ setInterval(function() {
 
 	//set 
 
-}, delay,15000);
+},15000);
