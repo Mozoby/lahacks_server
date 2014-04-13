@@ -65,9 +65,9 @@ var isStarted = false;
 
 io.sockets.on('connection', function(socket) {
     console.log('connection established: ' + clientCount );
-
+    clientCount += 1;
     socket.on('initialize', function(userId) {
-        clientCount += 1;
+        
         if(clientCount > 4){
             isStarted = true;
             console.log("Game will Start...");
@@ -172,11 +172,12 @@ var startInterval = setInterval(function() {
             //set timeout in order to accomodate th non-blocking io of socket.get
             setTimeout(function(){
                 //update all users with cluster count
+                Console.log("Rooms:");
                 console.log(io.sockets.manager.rooms);
                 Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
+                    Console.log(roomName + ': ' + clusterCount.io.sockets.clients(roomName).length);
                     io.sockets.clients(roomName).forEach(function(socket){
                         socket.emit('update', {clusterCount:io.sockets.clients(roomName).length});
-                        Console.log(roomName + ': ' + clusterCount.io.sockets.clients(roomName).length);
                     });
 
                     //if theres less than or equal to 2 people in the room exchange userIds
@@ -207,7 +208,7 @@ var startInterval = setInterval(function() {
             
 
             
-        },12000);
+        },17000);
         clearInterval(startInterval);
     }
 },30000);
