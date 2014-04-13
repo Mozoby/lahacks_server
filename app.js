@@ -76,7 +76,11 @@ var questionIndex = 0;
 
 var startInterval = setInterval(function() {
     if(isStarted){
-        console.log("Game Starting!")
+        console.log("Game Starting!");
+        //broadcast next question
+        io.sockets.emit('question', questions[questionIndex]);
+
+        questionIndex ++;
         setInterval(function(){
             //group users with same answers
             if(io.sockets.manager.rooms.length > 0){
@@ -90,6 +94,31 @@ var startInterval = setInterval(function() {
                         socket.leave(roomName);
                         socket.get('answer', function (err, answer) {
                             joined = false;
+                            if(answer != null){
+                                newRooms.forEach(function(roomObj){
+                                    if(!joined){
+                                        if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
+                                            joined = true;
+                                            socket.join(roomObj.name);
+                                        }
+                                    }
+                                });
+                                if(!joined){
+                                    newName = uuid();
+                                    newRooms.push({answer:answer, name: newName});
+                                    socket.join(newName);
+                                }
+                            }
+                        });
+                    });
+                });
+            }else{
+                //users which have no room assigned yet (beginning only)
+                newRooms = []; // {answer:'', name:''}
+                io.sockets.clients().forEach(function (socket) {
+                    socket.get('answer', function (err, answer) {
+                        joined = false;
+                        if(answer != null){
                             newRooms.forEach(function(roomObj){
                                 if(!joined){
                                     if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
@@ -103,27 +132,6 @@ var startInterval = setInterval(function() {
                                 newRooms.push({answer:answer, name: newName});
                                 socket.join(newName);
                             }
-                        });
-                    });
-                });
-            }else{
-                //users which have no room assigned yet (beginning only)
-                newRooms = []; // {answer:'', name:''}
-                io.sockets.clients().forEach(function (socket) {
-                    socket.get('answer', function (err, answer) {
-                        joined = false;
-                        newRooms.forEach(function(roomObj){
-                            if(!joined){
-                                if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
-                                    joined = true;
-                                    socket.join(roomObj.name);
-                                }
-                            }
-                        });
-                        if(!joined){
-                            newName = uuid();
-                            newRooms.push({answer:answer, name: newName});
-                            socket.join(newName);
                         }
                     });
                 });
