@@ -92,7 +92,7 @@ angular.module('socialGameApp')
 
       $scope.disableAnswer = false;
       var startTime = new Date().getTime();
-      var votingTime = 10;
+      var votingTime = 15;
       $scope.countDown = votingTime;
       var intervalId = setInterval(function() {
         $scope.$apply(function() {

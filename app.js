@@ -20,7 +20,6 @@ function endsWith(str, suffix) {
 
 //set up http server for receiving git post-push events for auto-deployment to the server
 http.createServer(function(req,res) {
-    console.log(req.url);
     if(req.url=='/gitpull'){
         child = exec('git pull', function(error,stdout,stderr){
             fs.writeFile("./gitresults.txt", stdout, function(err){
@@ -66,7 +65,7 @@ var isStarted = false;
 io.sockets.on('connection', function(socket) {
     console.log('connection established: ' + clientCount );
     clientCount += 1;
-    if(clientCount > 4){
+    if(clientCount >= 4){
         isStarted = true;
         console.log("Game will Start...");
     }
@@ -174,7 +173,7 @@ var startInterval = setInterval(function() {
                 console.log("Rooms:");
                 console.log(io.sockets.manager.rooms);
                 Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
-                    console.log(roomName + ': ' + clusterCount.io.sockets.clients(roomName).length);
+                    console.log(roomName + ': ' + io.sockets.clients(roomName).length);
                     io.sockets.clients(roomName).forEach(function(socket){
                         socket.emit('update', {clusterCount:io.sockets.clients(roomName).length});
                     });
