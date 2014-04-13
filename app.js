@@ -17,12 +17,19 @@ http.createServer(function(req,res) {
 var io = require('socket.io').listen(8080);
 
 var clientCount = 0;
+var isStarted = false;
 
 io.sockets.on('connection', function(socket) {
 	clientCount += 1;
+	if(clientCount > 4)
+		isStarted = true;
+
+	console.log('connection established: ' + clientCount )
+
 	socket.on('initialize', function(userId) {
 		socket.set('userId', userId, function(){
 			socket.emit('update', {clusterCount: clientCount});
+			console.log(userId);
 		});
 		socket.set('clusterID',null);
 		socket.set('answer',null);
@@ -38,11 +45,12 @@ io.sockets.on('connection', function(socket) {
 });
 
 setInterval(function() {
-	//group users with same answers who already in the same cluster
+	if(isStarted){
+		//group users with same answers who already in the same cluster
 
-	// or with users who have no cluster
-	//set null all answers
+		// or with users who have no cluster
+		//set null all answers
 
-	//set 
-
+		//set
+	}
 },15000);
