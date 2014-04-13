@@ -1,0 +1,18 @@
+{
+  "name": "lahacks",
+  "version": "1.0.0",
+  "description": "We rock",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mozoby/lahacks_server.git"
+  },
+  "author": "Bryan Thornbury",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/Mozoby/lahacks_server/issues"
+  }
+}
