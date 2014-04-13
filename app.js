@@ -44,8 +44,10 @@ var isStarted = false;
 
 io.sockets.on('connection', function(socket) {
     clientCount += 1;
-    if(clientCount > 4)
+    if(clientCount > 4){
         isStarted = true;
+        console.log("Game will Start...");
+    }
 
     console.log('connection established: ' + clientCount );
 
@@ -74,6 +76,7 @@ var questionIndex = 0;
 
 var startInterval = setInterval(function() {
     if(isStarted){
+        console.log("Game Starting!")
         setInterval(function(){
             //group users with same answers
             if(io.sockets.manager.rooms.length > 0){
@@ -97,7 +100,7 @@ var startInterval = setInterval(function() {
                             });
                             if(!joined){
                                 newName = uuid();
-                                newRooms.append({answer:answer, name: newName});
+                                newRooms.push({answer:answer, name: newName});
                                 socket.join(newName);
                             }
                         });
@@ -119,7 +122,7 @@ var startInterval = setInterval(function() {
                         });
                         if(!joined){
                             newName = uuid();
-                            newRooms.append({answer:answer, name: newName});
+                            newRooms.push({answer:answer, name: newName});
                             socket.join(newName);
                         }
                     });
