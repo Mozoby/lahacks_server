@@ -15,7 +15,7 @@ var question = function (q, answers, suggestions){
 };
 questions = [];
 
-questions.push(new question(),[],[]);
+questions.push(new question('',[],[]));
 
 questions.push(new question("Favorite Entrepreneur?", [],
 	['Ben Franklin','Henry Ford','John D. Rockefeller','Cyrus McCormick Sr.','Andrew Carnegie','Charles Schwab','Amadeo P. Giannini','J.P. Morgan','Charles Merrill','Martha Stewart','David Sarnoff','Robert Johnson','Oprah Winfrey','George Eastman','Steve Jobs','Michael Dell','Bill Gates','Thomas Alva Edison','Ross Perot','Estee Lauder','Madam C.J. Walker','Asa Candler','W.K. Kellogg','Milton Hershey','Eberhard Anheuser','Adolphus Busch','Ray Kroc','Harland Sanders','Juan Trippe','Herb Kelleher','Fred W. Smith','William S. Harley','Arthur Davidson','Aaron Mongomery Ward','Sam Walton','Richard Sears','Alvah Roebuck','Ralph Lauren','Levi Strauss','Phil Knight','P.T. Barnum','Louis B. Mayer','Walt Disney','Berry Gordy Jr.','George Lucas','William Becker','Paul Greene','J.W. Marriott Jr.','Conrad Hilton Sr.','Jeff Bezos','Steve Case','Pierre Omidyar','Larry Page','Sergey Brin']));

@@ -73,6 +73,7 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('answer',function(data){
         socket.set('answer', data.answer);
+        console.log(data.answer);
     });
 });
 

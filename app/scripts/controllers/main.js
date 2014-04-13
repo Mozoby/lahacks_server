@@ -12,7 +12,7 @@ angular.module('socialGameApp')
 //    var url = 'https://goinstant.net/df6160309f0a/my-application';
     var id = idservice.id;
     console.log(id);
-    enableGame( {question: "Best Music?", answers:['Katy Perry','Eminem','Linkin Park','Blake Shelton']} );
+//    enableGame( {question: "Best Music?", answers:['Katy Perry','Eminem','Linkin Park','Blake Shelton']} );
 
     var socket = {};
     try {
