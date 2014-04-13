@@ -32,7 +32,7 @@ io.sockets.on('connection', function(socket) {
 			console.log(userId);
 		});
 		socket.emit('update', {clusterCount: clientCount});
-		console.log(socket.get('userId'));
+		//console.log(socket.get('userId'));
 	});
 
 	socket.on('disconnect',function(data){
