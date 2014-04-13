@@ -24,13 +24,15 @@ io.sockets.on('connection', function(socket) {
 	if(clientCount > 4)
 		isStarted = true;
 
-	console.log('connection established: ' + clientCount )
+	console.log('connection established: ' + clientCount );
 
 	socket.on('initialize', function(userId) {
+		
 		socket.set('userId', userId, function(){
-			socket.emit('update', {clusterCount: clientCount});
 			console.log(userId);
 		});
+		socket.emit('update', {clusterCount: clientCount});
+		console.log(socket.get('userId'));
 		socket.set('clusterID',null);
 		socket.set('answer',null);
 	});
