@@ -66,12 +66,11 @@ var isStarted = false;
 io.sockets.on('connection', function(socket) {
     console.log('connection established: ' + clientCount );
     clientCount += 1;
+    if(clientCount > 4){
+        isStarted = true;
+        console.log("Game will Start...");
+    }
     socket.on('initialize', function(userId) {
-        
-        if(clientCount > 4){
-            isStarted = true;
-            console.log("Game will Start...");
-        }
         socket.set('userId', userId, function(){
             console.log(userId);
         });
