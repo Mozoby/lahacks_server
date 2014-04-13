@@ -33,8 +33,6 @@ io.sockets.on('connection', function(socket) {
 		});
 		socket.emit('update', {clusterCount: clientCount});
 		console.log(socket.get('userId'));
-		socket.set('clusterID',null);
-		socket.set('answer',null);
 	});
 
 	socket.on('disconnect',function(data){
