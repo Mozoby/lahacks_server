@@ -111,6 +111,7 @@ var startInterval = setInterval(function() {
                     roomClientCount = io.sockets.clients(roomName).length;
                     clientsProcessed = 0;
                     io.sockets.clients(roomName).forEach(function (socket) {
+                        roomName = roomName.replace('/','');
                         socket.leave(roomName);
                         socket.get('answer', function (err, answer) {
                             joined = false;
