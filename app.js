@@ -87,7 +87,7 @@ var startInterval = setInterval(function() {
                         socket.leave(roomName);
                         socket.get('answer', function (err, answer) {
                             joined = false;
-                            newRooms.forEach(roomObj,function(){
+                            newRooms.forEach(function(roomObj){
                                 if(!joined){
                                     if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
                                         joined = true;
@@ -109,7 +109,7 @@ var startInterval = setInterval(function() {
                 io.sockets.clients().forEach(function (socket) {
                     socket.get('answer', function (err, answer) {
                         joined = false;
-                        newRooms.forEach(roomObj,function(){
+                        newRooms.forEach(function(roomObj){
                             if(!joined){
                                 if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
                                     joined = true;
