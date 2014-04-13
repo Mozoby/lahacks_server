@@ -1,12 +1,17 @@
-<div class="table-wrapper" style="border: 1px solid #e3e3e3; background-color: #fbfbfb; padding: 10px;">
-  <!--<table class="table">-->
-    <div class="row" ng-repeat="message in messages">
-      <div class="message-username col-sm-2">{{limitLength(message.author)}}</div>
-      <span class="message-content col-sm-10">
-        {{ message.content }}
-      </span>
+<div class="well well-sm" style="background-color: transparent; border: none;">
+  <ul class="nav nav-pills" data-tabs="tabs">
+    <button onclick="history.back();" class="btn btn-info pull-left" >Back</button>
+    <!--<a class="btn btn-sm btn-default" href="#/login">Login</a>-->
+  </ul>
+</div>
+
+<div class="table-wrapper" style="border: 1px solid #e3e3e3; background-color: #fbfbfb; padding: 10px; margin: 10px;">
+  <div class="" ng-repeat="message in messages" >
+    <div class="col-sm-2 gi-name">{{limitLength(message.author)}}</div>
+    <div class="" style="margin-left: 40px;">
+      {{ message.content }}
     </div>
-  <!--</table>-->
+  </div>
 </div>
 
 <form role="form" class="well clearfix" ng-submit="sendMessage()">
@@ -14,14 +19,14 @@
     <div class="col-xs-3">
       <div class="input-group">
         <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-        <input ng-model="author" class="input input-lg form-control" placeholder="Nick name">
+        <input ng-model="author" class="input form-control" placeholder="Nick name">
       </div>
     </div>
     <div class="col-xs-7">
-      <input ng-model="newMessage" ng-disabled="sendingMessage" placeholder="What's up?" class="input input-lg form-control">
+      <input ng-model="newMessage" ng-disabled="sendingMessage" placeholder="What's up?" class="input form-control">
     </div>
     <div class="col-xs-2">
-      <button type="submit" class="btn btn-primary btn-lg btn-block">Send</button>
+      <button type="submit" class="btn btn-primary btn-block">Send</button>
     </div>
   </div>
 </form>

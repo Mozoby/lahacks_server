@@ -1,13 +1,15 @@
 'use strict';
 
 angular.module('socialGameApp')
-  .controller('ChatCtrl', function ($scope, $routeParams, $goKey) {
+  .controller('ChatCtrl', function ($scope, $routeParams, $goKey, idservice) {
 
     var uuid = $routeParams.uuid;
-    uuid = "messages";
+    console.log(uuid);
+//    uuid = "messages"; //todo: remove this
 
     $scope.messages = $goKey(uuid).$sync();
     window.scope = $scope;
+    $scope.author = idservice.id;
 
     $scope.messages.$on('add', {
       local: true,
@@ -33,7 +35,8 @@ angular.module('socialGameApp')
 
     function scrollOn() {
       setTimeout(function() {
-        $('.gi-chat-wrapper').scrollTop($('.gi-chat-wrapper').children().height());
+//        $('.gi-chat-wrapper').scrollTop($('.gi-chat-wrapper').children().height());
+        window.scrollTo(0,document.body.scrollHeight);
       }, 0);
     }
 
