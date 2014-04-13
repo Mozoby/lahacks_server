@@ -3,8 +3,7 @@ var question = function (q, answers, suggestions){
 	this.answers = answers;
 	this.suggestions = suggestions;
 };
-
-var questions = [];
+questions = [];
 
 questions.push(new question("Favorite Actor?"), ['Johnny Depp', 'Brad Pitt', 'Leonardo DiCaprio', 'Robert Downey Jr.'],[]);
 
