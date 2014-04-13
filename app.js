@@ -120,7 +120,7 @@ var startInterval = setInterval(function() {
                                         if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
                                             joined = true;
                                             socket.join(roomObj.name);
-                                            Console.log("Joining Room on answer: " + answer);
+                                            console.log("Joining Room on answer: " + answer);
                                         }
                                     }
                                 });
@@ -129,7 +129,7 @@ var startInterval = setInterval(function() {
                                     newRooms.push({answer:answer, name: newName});
                                     socket.join(newName);
                                     roomsCreated += 1;
-                                    Console.log("New Room Created!");
+                                    console.log("New Room Created!");
                                 }
                             }
                         });
@@ -139,7 +139,7 @@ var startInterval = setInterval(function() {
                 if(roomsCreated > 0){
                     //game needs to restart
                     roomsCreated = 0;
-                    Console.log("Restarting Game.");
+                    console.log("Restarting Game.");
                     isStarted = false;
                     clientCount = 0;
                     sockets.io.emit('restart',null);
@@ -171,7 +171,7 @@ var startInterval = setInterval(function() {
             //set timeout in order to accomodate th non-blocking io of socket.get
             setTimeout(function(){
                 //update all users with cluster count
-                Console.log("Rooms:");
+                console.log("Rooms:");
                 console.log(io.sockets.manager.rooms);
                 Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
                     Console.log(roomName + ': ' + clusterCount.io.sockets.clients(roomName).length);
