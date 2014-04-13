@@ -2,6 +2,14 @@ var exec = require('child_process').exec;
 var http = require('http');
 var fs = require('fs');
 
+function uuid(){
+	var s = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+	    return v.toString(16);
+	});
+	return s;
+}
+
 //set up http server for receiving git post-push events for auto-deployment to the server
 http.createServer(function(req,res) {
 	if(req.url=='/gitpull'){
@@ -44,13 +52,97 @@ io.sockets.on('connection', function(socket) {
 	});
 });
 
-setInterval(function() {
+var questionIndex = 0;
+var questions = [
+	{question: "Question 1?", answers:['1','2','3','4']},
+	{question: "Question 2?", answers:['1','2','3','4']},
+	{question: "Question 3?", answers:['1','2','3','4']},
+	{question: "Question 4?", answers:['1','2','3','4']},
+	{question: "Question 5?", answers:['1','2','3','4']},
+	{question: "Question 6?", answers:['1','2','3','4']},
+	{question: "Question 7?", answers:['1','2','3','4']},
+	{question: "Question 8?", answers:['1','2','3','4']},
+	{question: "Question 9?", answers:['1','2','3','4']},
+	{question: "Question 10?", answers:['1','2','3','4']},
+	{question: "Question 11?", answers:['1','2','3','4']},
+	{question: "Question 12?", answers:['1','2','3','4']},
+	{question: "Question 13?", answers:['1','2','3','4']},
+	{question: "Question 14?", answers:['1','2','3','4']}
+];
+
+var startInterval = setInterval(function() {
 	if(isStarted){
-		//group users with same answers who already in the same cluster
+		setInterval(function(){
+			//group users with same answers
+			if(io.sockets.manager.rooms.length > 0){
+				console.log(io.sockets.manager.rooms);
+				Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
+					
+					newRooms = [{name:uuid(), count: 0},
+						{name:uuid(), count: 0},
+						{name:uuid(), count: 0},
+						{name:uuid(), count: 0}];
 
-		// or with users who have no cluster
-		//set null all answers
+					io.sockets.clients(roomName).forEach(function (socket) {
+						socket.leave(roomName);
+						socket.get('answer', function (err, answer) {
+					      	socket.join(newRooms[answer].name);
+					      	newRooms[answer].count += 1;
+					    });
+					});
+				});
+			}else{
+				//users which have no room assigned yet (beginning only)
+				newRooms = [{name:uuid(), count: 0},
+					{name:uuid(), count: 0},
+					{name:uuid(), count: 0},
+					{name:uuid(), count: 0}];
 
-		//set
+				io.sockets.clients().forEach(function (socket) {
+					socket.get('answer', function (err, answer) {
+				      	socket.join(newRooms[answer].name);
+				      	newRooms[answer].count += 1;
+				    });
+				});
+
+				
+			}
+			//set timeout in order to accomodate th non-blocking io of socket.get
+			setTimeout(function(){
+				//update all users with cluster count
+				console.log(io.sockets.manager.rooms);
+				Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
+					io.sockets.clients(roomName).forEach(function(socket){
+						socket.emit('update', {clusterCount:io.sockets.clients(roomName).length});
+					});
+
+					//if theres less than or equal to 2 people in the room exchange userIds
+					if(io.sockets.clients(roomName).length <= 2){
+						userIds = [];
+						io.sockets.clients(roomName).forEach(function(socket){
+							io.sockets.clients(roomName).forEach(function(socket2){
+								if(socket2.id != socket.id){
+									socket2.get('userId',function(err,userId){
+										socket.emit('finalize', {friendId:userId});
+									});
+								}
+							});
+						});
+					}
+				});
+			},1000);
+			
+
+			//set all answers to null
+			io.sockets.clients().forEach(function (socket) {
+				socket.set('answer',null);
+			});
+
+			//broadcast next question
+			io.sockets.emit('question', questions[questionIndex]);
+
+			questionIndex ++;
+		},15000);
+		clearInterval(startInterval);
 	}
-},15000);
+},30000);
