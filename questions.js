@@ -5,20 +5,6 @@ var question = function (q, answers, suggestions){
 };
 
 var questions = [];
-{question: "Best Music?", answers:['Katy Perry','Eminem','Linkin Park','Blake Shelton']},
-    {question: "TV Show?", answers:},
-    {question: "Movie?", answers:['Inception','300','Boondock Saints','The Hunger Games'],suggestions:[]},
-    {question: "Question 4?", answers:['1','2','3','4']},
-    {question: "Question 5?", answers:['1','2','3','4']},
-    {question: "Question 6?", answers:['1','2','3','4']},
-    {question: "Question 7?", answers:['1','2','3','4']},
-    {question: "Question 8?", answers:['1','2','3','4']},
-    {question: "Question 9?", answers:['1','2','3','4']},
-    {question: "Question 10?", answers:['1','2','3','4']},
-    {question: "Question 11?", answers:['1','2','3','4']},
-    {question: "Question 12?", answers:['1','2','3','4']},
-    {question: "Question 13?", answers:['1','2','3','4']},
-    {question: "Question 14?", answers:['1','2','3','4']}
 
 questions.append(new question("Best Artist?",
 	['Katy Perry','Eminem','Linkin Park','Blake Shelton'],
