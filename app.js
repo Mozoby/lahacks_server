@@ -176,6 +176,7 @@ var startInterval = setInterval(function() {
                 Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
                     io.sockets.clients(roomName).forEach(function(socket){
                         socket.emit('update', {clusterCount:io.sockets.clients(roomName).length});
+                        Console.log(roomName + ': ' + clusterCount.io.sockets.clients(roomName).length);
                     });
 
                     //if theres less than or equal to 2 people in the room exchange userIds
