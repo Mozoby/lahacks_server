@@ -1,7 +1,11 @@
-<div ng-switch on="disableAnswer">
+<div ng-switch on="status">
 
-  <div ng-switch-when="false" style="padding-top: 20px; padding-bottom: 20px;">
-    <p>{{question}} <span>{{countDown}}</span></p>
+  <div ng-switch-when="start" style="padding-top: 20px; padding-bottom: 20px;" class="text-center">
+    <p style="font-size: 40px;">{{question}}</p>
+    <br/>
+    <span style="color:#eee; font-size: 17px;">Timeout: </span>
+    <span style="color: brown; font-size: 20px;">{{countDown}}</span>
+    <br/>
 
     <div ng-repeat="choice in answers" class="choice">
       <button ng-click="answer(choice);" ng-disabled="disableAnswer" class="btn btn-default">
@@ -10,7 +14,7 @@
     </div>
 
     <form role="form" ng-submit="answer(otherAnswer);">
-      <div class="input-group choice">
+      <div class="input-group choice" ng-show="question">
         <input id="additionalAnswer" ng-model="otherAnswer" ng-disabled="disableAnswer"
                class="typeahead input form-control"
                placeholder="other choice" type="text"/>
@@ -27,6 +31,12 @@
   <div class="span-12 text-center" ng-switch-default>
     <h1 >#interest</h1>
     <h1 style="color: #ff6a00" class="lead">{{clusterCount}} Matches</h1>
+  </div>
+
+
+  <div ng-switch-when="waiting" class="text-center" style="padding: 30px">
+    <img src="../images/sparker_logo.png" alt=""/>
+    <h1 style="color: brown">Waiting for more people to join</h1>
   </div>
 
 </div>
