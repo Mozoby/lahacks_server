@@ -105,6 +105,7 @@ var startInterval = setInterval(function() {
             if(io.sockets.manager.rooms.length > 0){
                 console.log(io.sockets.manager.rooms);
                 Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
+                    roomName = roomName.replace('/','');
                     
                     newRooms = []; // {answer:'', name:''}
                     roomClientCount = io.sockets.clients(roomName).length;
@@ -173,8 +174,9 @@ var startInterval = setInterval(function() {
                 console.log("Rooms:");
                 console.log(io.sockets.manager.rooms);
                 Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
+                    roomName = roomName.replace('/','');
                     if(roomName !== ''){
-                        console.log(roomName.replace('/','') + ': ' + io.sockets.clients(roomName.replace('/','')).length);
+                        console.log(roomName+ ': ' + io.sockets.clients(roomName).length);
                         io.sockets.clients(roomName).forEach(function(socket){
                             socket.emit('update', {clusterCount:io.sockets.clients(roomName).length});
                         });
