@@ -1,6 +1,9 @@
 var exec = require('child_process').exec;
 var http = require('http');
 var fs = require('fs');
+var path = require('path');
+
+require('./questions.js');
 
 
 function uuid(){
@@ -13,14 +16,34 @@ function uuid(){
 
 //set up http server for receiving git post-push events for auto-deployment to the server
 http.createServer(function(req,res) {
+    console.log(req.url);
     if(req.url=='/gitpull'){
         child = exec('git pull', function(error,stdout,stderr){
             fs.writeFile("./gitresults.txt", stdout, function(err){
                 //do nothing
             });
         });
+    }else if(req.url == '/'){
+        fs.readFile('app/index.html', function(err, page) {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.write(page);
+            res.end();
+        });
+    }else{
+        path.exists('app' + req.url,function(exists){
+            if(exists){
+                fs.readFile('app' + req.url, function(err, page) {
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    res.write(page);
+                    res.end();
+                });
+            }else{
+                res.writeHead(400);
+                res.end();
+            }
+        });
     }
-});
+}).listen(80,'0.0.0.0');
 
 //set up websocket to listen for new hosts
 var io = require('socket.io').listen(8080);
@@ -29,18 +52,18 @@ var clientCount = 0;
 var isStarted = false;
 
 io.sockets.on('connection', function(socket) {
-    clientCount += 1;
-    if(clientCount > 4)
-        isStarted = true;
-
     console.log('connection established: ' + clientCount );
 
     socket.on('initialize', function(userId) {
-        
+        clientCount += 1;
+        if(clientCount > 4){
+            isStarted = true;
+            console.log("Game will Start...");
+        }
         socket.set('userId', userId, function(){
             console.log(userId);
         });
-        socket.emit('update', {clusterCount: clientCount});
+        io.sockets.emit('update', {clusterCount: clientCount});
         //console.log(socket.get('userId'));
     });
 
@@ -57,25 +80,15 @@ var natural = require('natural');
 var string_similarity_threshold = 0.72;
 
 var questionIndex = 0;
-var questions = [
-    {question: "Question 1?", answers:['1','2','3','4']},
-    {question: "Question 2?", answers:['1','2','3','4']},
-    {question: "Question 3?", answers:['1','2','3','4']},
-    {question: "Question 4?", answers:['1','2','3','4']},
-    {question: "Question 5?", answers:['1','2','3','4']},
-    {question: "Question 6?", answers:['1','2','3','4']},
-    {question: "Question 7?", answers:['1','2','3','4']},
-    {question: "Question 8?", answers:['1','2','3','4']},
-    {question: "Question 9?", answers:['1','2','3','4']},
-    {question: "Question 10?", answers:['1','2','3','4']},
-    {question: "Question 11?", answers:['1','2','3','4']},
-    {question: "Question 12?", answers:['1','2','3','4']},
-    {question: "Question 13?", answers:['1','2','3','4']},
-    {question: "Question 14?", answers:['1','2','3','4']}
-];
+var roomsCreated = 0;
 
 var startInterval = setInterval(function() {
     if(isStarted){
+        console.log("Game Starting!");
+        //broadcast next question
+        io.sockets.emit('question', questions[questionIndex%questions.length]);
+
+        questionIndex ++;
         setInterval(function(){
             //group users with same answers
             if(io.sockets.manager.rooms.length > 0){
@@ -89,45 +102,59 @@ var startInterval = setInterval(function() {
                         socket.leave(roomName);
                         socket.get('answer', function (err, answer) {
                             joined = false;
-                            newRooms.forEach(roomObj,function(){
-                                if(!joined){
-                                    if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
-                                        joined = true;
-                                        socket.join(roomObj.name);
+                            if(answer !== null){
+                                newRooms.forEach(function(roomObj){
+                                    if(!joined){
+                                        if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
+                                            joined = true;
+                                            socket.join(roomObj.name);
+                                            Console.log("Joining Room on answer: " + answer);
+                                        }
                                     }
+                                });
+                                if(!joined){
+                                    newName = uuid();
+                                    newRooms.push({answer:answer, name: newName});
+                                    socket.join(newName);
+                                    roomsCreated += 1;
+                                    Console.log("New Room Created!");
                                 }
-                            });
-                            if(!joined){
-                                newName = uuid();
-                                newRooms.append({answer:answer, name: newName});
-                                socket.join(newName);
                             }
                         });
                     });
                 });
             }else{
-                //users which have no room assigned yet (beginning only)
-                newRooms = []; // {answer:'', name:''}
-                io.sockets.clients().forEach(function (socket) {
-                    socket.get('answer', function (err, answer) {
-                        joined = false;
-                        newRooms.forEach(roomObj,function(){
-                            if(!joined){
-                                if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
-                                    joined = true;
-                                    socket.join(roomObj.name);
+                if(roomsCreated > 0){
+                    //game needs to restart
+                    roomsCreated = 0;
+                    Console.log("Restarting Game.");
+                    isStarted = false;
+                    clientCount = 0;
+                    sockets.io.emit('restart',null);
+                }else{
+                    //users which have no room assigned yet (beginning only)
+                    newRooms = []; // {answer:'', name:''}
+                    io.sockets.clients().forEach(function (socket) {
+                        socket.get('answer', function (err, answer) {
+                            joined = false;
+                            if(answer !== null){
+                                newRooms.forEach(function(roomObj){
+                                    if(!joined){
+                                        if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
+                                            joined = true;
+                                            socket.join(roomObj.name);
+                                        }
+                                    }
+                                });
+                                if(!joined){
+                                    newName = uuid();
+                                    newRooms.push({answer:answer, name: newName});
+                                    socket.join(newName);
                                 }
                             }
                         });
-                        if(!joined){
-                            newName = uuid();
-                            newRooms.append({answer:answer, name: newName});
-                            socket.join(newName);
-                        }
                     });
-                });
-
-                
+                }
             }
             //set timeout in order to accomodate th non-blocking io of socket.get
             setTimeout(function(){
