@@ -1,0 +1,27 @@
+
+
+<ul class="gi-message-list">
+
+</ul>
+
+
+<div class="gi-chat gi-override gi-right gi-anchor">
+  <div class="gi-collapse-wrapper">
+    <div class="gi-collapse">
+      <span class="gi-icon"></span>
+    </div>
+  </div>
+  <div class="gi-chat-wrapper">
+    <ul class="gi-message-list">
+      <li ng-repeat="message in messages" class="gi-message gi-local-message">
+        <div class="gi-color"> <div class="gi-avatar"></div> </div>
+        <div class="gi-name">{{message.author}}</div>
+        <div class="gi-text">{{message.content}}</div>
+      </li>
+    </ul>
+    <form role="form" class="gi-message-form clearfix" ng-submit="sendMessage()">
+      <input ng-model="newMessage" class="gi-message-input" type="text" placeholder="Message {{author}}">
+      <button type="submit" class="gi-message-btn" type="button"><span class="gi-icon"></span></button>
+    </form>
+  </div>
+</div>

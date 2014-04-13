@@ -1,0 +1,27 @@
+<div class="table-wrapper" style="border: 1px solid #e3e3e3; background-color: #fbfbfb; padding: 10px;">
+  <!--<table class="table">-->
+    <div class="row" ng-repeat="message in messages">
+      <div class="message-username col-sm-2">{{limitLength(message.author)}}</div>
+      <span class="message-content col-sm-10">
+        {{ message.content }}
+      </span>
+    </div>
+  <!--</table>-->
+</div>
+
+<form role="form" class="well clearfix" ng-submit="sendMessage()">
+  <div class="row">
+    <div class="col-xs-3">
+      <div class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+        <input ng-model="author" class="input input-lg form-control" placeholder="Nick name">
+      </div>
+    </div>
+    <div class="col-xs-7">
+      <input ng-model="newMessage" ng-disabled="sendingMessage" placeholder="What's up?" class="input input-lg form-control">
+    </div>
+    <div class="col-xs-2">
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Send</button>
+    </div>
+  </div>
+</form>
