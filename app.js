@@ -78,7 +78,7 @@ var startInterval = setInterval(function() {
     if(isStarted){
         console.log("Game Starting!");
         //broadcast next question
-        io.sockets.emit('question', questions[questionIndex]);
+        io.sockets.emit('question', questions[questionIndex%questions.length]);
 
         questionIndex ++;
         setInterval(function(){
