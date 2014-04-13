@@ -173,23 +173,25 @@ var startInterval = setInterval(function() {
                 console.log("Rooms:");
                 console.log(io.sockets.manager.rooms);
                 Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
-                    console.log(roomName + ': ' + io.sockets.clients(roomName).length);
-                    io.sockets.clients(roomName).forEach(function(socket){
-                        socket.emit('update', {clusterCount:io.sockets.clients(roomName).length});
-                    });
-
-                    //if theres less than or equal to 2 people in the room exchange userIds
-                    if(io.sockets.clients(roomName).length <= 2){
-                        roomId = uuid();
+                    if(roomName !== ''){
+                        console.log(roomName + ': ' + io.sockets.clients(roomName.replace('/','')).length);
                         io.sockets.clients(roomName).forEach(function(socket){
-                            io.sockets.clients(roomName).forEach(function(socket2){
-                                if(socket2.id != socket.id){
-                                    socket2.get('userId',function(err,userId){
-                                        socket.emit('finalize', {roomId:roomId});
-                                    });
-                                }
-                            });
+                            socket.emit('update', {clusterCount:io.sockets.clients(roomName).length});
                         });
+
+                        //if theres less than or equal to 2 people in the room exchange userIds
+                        if(io.sockets.clients(roomName).length <= 2){
+                            roomId = uuid();
+                            io.sockets.clients(roomName).forEach(function(socket){
+                                io.sockets.clients(roomName).forEach(function(socket2){
+                                    if(socket2.id != socket.id){
+                                        socket2.get('userId',function(err,userId){
+                                            socket.emit('finalize', {roomId:roomId});
+                                        });
+                                    }
+                                });
+                            });
+                        }
                     }
                 });
 
