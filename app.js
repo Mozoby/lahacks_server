@@ -1,6 +1,7 @@
 var exec = require('child_process').exec;
 var http = require('http');
 var fs = require('fs');
+var path = require('path');
 
 require('./questions.js');
 
@@ -29,7 +30,7 @@ http.createServer(function(req,res) {
             res.end();
         });
     }else{
-        fs.exists('app' + req.url,function(exists){
+        path.exists('app' + req.url,function(exists){
             if(exists){
                 fs.readFile('app' + req.url, function(err, page) {
                     res.writeHead(200, {'Content-Type': 'text/html'});
