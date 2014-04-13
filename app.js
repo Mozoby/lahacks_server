@@ -1,4 +1,4 @@
-var exec = require('child-process').exec;
+var exec = require('child_process').exec;
 var http = require('http');
 var fs = require('fs');
 
@@ -39,6 +39,7 @@ io.sockets.on('connection', function(socket) {
 
 setInterval(function() {
 	//group users with same answers who already in the same cluster
+
 	// or with users who have no cluster
 	//set null all answers
 
