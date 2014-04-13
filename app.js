@@ -2,6 +2,8 @@ var exec = require('child_process').exec;
 var http = require('http');
 var fs = require('fs');
 
+require('./questions.js');
+
 
 function uuid(){
     var s = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -13,14 +15,26 @@ function uuid(){
 
 //set up http server for receiving git post-push events for auto-deployment to the server
 http.createServer(function(req,res) {
+    console.log(req.url);
     if(req.url=='/gitpull'){
         child = exec('git pull', function(error,stdout,stderr){
             fs.writeFile("./gitresults.txt", stdout, function(err){
                 //do nothing
             });
         });
+    }else{
+        if(fs.existsSync('app' + req.url)){
+            fs.readFile('app' + req.url, function(err, page) {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.write(page);
+                res.end();
+            });
+        }else{
+            res.writeHead(400);
+            res.end();
+        }
     }
-});
+}).listen(80,'0.0.0.0');
 
 //set up websocket to listen for new hosts
 var io = require('socket.io').listen(8080);
@@ -40,7 +54,7 @@ io.sockets.on('connection', function(socket) {
         socket.set('userId', userId, function(){
             console.log(userId);
         });
-        socket.emit('update', {clusterCount: clientCount});
+        io.sockets.emit('update', {clusterCount: clientCount});
         //console.log(socket.get('userId'));
     });
 
@@ -57,22 +71,6 @@ var natural = require('natural');
 var string_similarity_threshold = 0.72;
 
 var questionIndex = 0;
-var questions = [
-    {question: "Question 1?", answers:['1','2','3','4']},
-    {question: "Question 2?", answers:['1','2','3','4']},
-    {question: "Question 3?", answers:['1','2','3','4']},
-    {question: "Question 4?", answers:['1','2','3','4']},
-    {question: "Question 5?", answers:['1','2','3','4']},
-    {question: "Question 6?", answers:['1','2','3','4']},
-    {question: "Question 7?", answers:['1','2','3','4']},
-    {question: "Question 8?", answers:['1','2','3','4']},
-    {question: "Question 9?", answers:['1','2','3','4']},
-    {question: "Question 10?", answers:['1','2','3','4']},
-    {question: "Question 11?", answers:['1','2','3','4']},
-    {question: "Question 12?", answers:['1','2','3','4']},
-    {question: "Question 13?", answers:['1','2','3','4']},
-    {question: "Question 14?", answers:['1','2','3','4']}
-];
 
 var startInterval = setInterval(function() {
     if(isStarted){
