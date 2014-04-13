@@ -22,6 +22,12 @@ http.createServer(function(req,res) {
                 //do nothing
             });
         });
+    }else if(req.url == '/'){
+        fs.readFile('app/index.html', function(err, page) {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.write(page);
+            res.end();
+        });
     }else{
         if(fs.existsSync('app' + req.url)){
             fs.readFile('app' + req.url, function(err, page) {
@@ -43,16 +49,14 @@ var clientCount = 0;
 var isStarted = false;
 
 io.sockets.on('connection', function(socket) {
-    clientCount += 1;
-    if(clientCount > 4){
-        isStarted = true;
-        console.log("Game will Start...");
-    }
-
     console.log('connection established: ' + clientCount );
 
     socket.on('initialize', function(userId) {
-        
+        clientCount += 1;
+        if(clientCount > 4){
+            isStarted = true;
+            console.log("Game will Start...");
+        }
         socket.set('userId', userId, function(){
             console.log(userId);
         });
@@ -73,6 +77,7 @@ var natural = require('natural');
 var string_similarity_threshold = 0.72;
 
 var questionIndex = 0;
+var roomsCreated = 0;
 
 var startInterval = setInterval(function() {
     if(isStarted){
@@ -94,7 +99,42 @@ var startInterval = setInterval(function() {
                         socket.leave(roomName);
                         socket.get('answer', function (err, answer) {
                             joined = false;
-                            if(answer != null){
+                            if(answer !== null){
+                                newRooms.forEach(function(roomObj){
+                                    if(!joined){
+                                        if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
+                                            joined = true;
+                                            socket.join(roomObj.name);
+                                            Console.log("Joining Room on answer: " + answer);
+                                        }
+                                    }
+                                });
+                                if(!joined){
+                                    newName = uuid();
+                                    newRooms.push({answer:answer, name: newName});
+                                    socket.join(newName);
+                                    roomsCreated += 1;
+                                    Console.log("New Room Created!");
+                                }
+                            }
+                        });
+                    });
+                });
+            }else{
+                if(roomsCreated > 0){
+                    //game needs to restart
+                    roomsCreated = 0;
+                    Console.log("Restarting Game.");
+                    isStarted = false;
+                    clientCount = 0;
+                    sockets.io.emit('restart',null);
+                }else{
+                    //users which have no room assigned yet (beginning only)
+                    newRooms = []; // {answer:'', name:''}
+                    io.sockets.clients().forEach(function (socket) {
+                        socket.get('answer', function (err, answer) {
+                            joined = false;
+                            if(answer !== null){
                                 newRooms.forEach(function(roomObj){
                                     if(!joined){
                                         if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
@@ -111,32 +151,7 @@ var startInterval = setInterval(function() {
                             }
                         });
                     });
-                });
-            }else{
-                //users which have no room assigned yet (beginning only)
-                newRooms = []; // {answer:'', name:''}
-                io.sockets.clients().forEach(function (socket) {
-                    socket.get('answer', function (err, answer) {
-                        joined = false;
-                        if(answer != null){
-                            newRooms.forEach(function(roomObj){
-                                if(!joined){
-                                    if(natural.JaroWinklerDistance(answer,roomObj.answer) >= string_similarity_threshold){
-                                        joined = true;
-                                        socket.join(roomObj.name);
-                                    }
-                                }
-                            });
-                            if(!joined){
-                                newName = uuid();
-                                newRooms.push({answer:answer, name: newName});
-                                socket.join(newName);
-                            }
-                        }
-                    });
-                });
-
-                
+                }
             }
             //set timeout in order to accomodate th non-blocking io of socket.get
             setTimeout(function(){
