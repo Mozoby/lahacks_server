@@ -14,6 +14,10 @@ function uuid(){
     return s;
 }
 
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
 //set up http server for receiving git post-push events for auto-deployment to the server
 http.createServer(function(req,res) {
     console.log(req.url);
@@ -33,7 +37,15 @@ http.createServer(function(req,res) {
         path.exists('app' + req.url,function(exists){
             if(exists){
                 fs.readFile('app' + req.url, function(err, page) {
-                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    if(endsWith(req.url,'.css'))
+                     res.writeHead(200, {'Content-Type': 'text/css'});
+                    else if(endsWith(req.url,'.js'))
+                        res.writeHead(200, {'Content-Type': 'application/javascript'});
+                    else if(endsWith(req.url,'.png') )
+                        res.writeHead(200, {'Content-Type': 'image/png'});
+                    else
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+
                     res.write(page);
                     res.end();
                 });
