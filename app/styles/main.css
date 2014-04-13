@@ -1,7 +1,68 @@
+.gi-name {
+  display: inline-block;
+  width: 145px;
+  padding: 0 10px 0 7px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 2;
+  font-size: 12px;
+  font-weight: 600;
+  color: #909090;
+}
+
+.view {
+  background-color: #333;
+  /*color: #eee;*/
+  font-family: 'Roboto', sans-serif;
+  /*margin-right: auto !important;*/
+  /*margin-left: auto !important;*/
+}
+
 /* Space out content a bit */
+html {
+  background-color: #333;
+}
 body {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  /*padding-top: 20px;*/
+  /*padding-bottom: 20px;*/
+  font-weight: 100;
+  /*line-height: 1.1;*/
+}
+
+h1 {
+  font-size:36px;
+  font-weight: 100;
+  line-height: 1.1;
+  color: #eee;
+}
+
+p {
+  font-size: 20px;
+  color: #eee;
+}
+
+.choice {
+  margin: 25px;
+}
+
+.btn-default {
+  background-color: #ffffff;
+  font-size: 20px;
+  font-weight: 100;
+}
+
+.lead {
+  margin-bottom: 5px;
+  font-size: 48px;
+  font-weight: 100;
+  line-height: 1.4;
+}
+
+.form-control {
+  color: #555;
+  line-height: 1.428;
+  font-size: 20px;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
