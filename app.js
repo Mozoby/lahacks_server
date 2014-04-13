@@ -174,7 +174,7 @@ var startInterval = setInterval(function() {
                 console.log("Rooms:");
                 console.log(io.sockets.manager.rooms);
                 Object.keys(io.sockets.manager.rooms).forEach(function(roomName){
-                    Console.log(roomName + ': ' + clusterCount.io.sockets.clients(roomName).length);
+                    console.log(roomName + ': ' + clusterCount.io.sockets.clients(roomName).length);
                     io.sockets.clients(roomName).forEach(function(socket){
                         socket.emit('update', {clusterCount:io.sockets.clients(roomName).length});
                     });
